@@ -4,6 +4,7 @@
 
 ## 目录
 
+- [Agent](./Agent/README.md)：Agent 项目、课程资料、技术说明及学习记录。
 - [LangChain](./LangChain/README.md)：LangChain / LangGraph 课程与示例项目接入区。
 - [RAG](./RAG/README.md)：RAG 项目、技术说明及改编学习内容。
 
