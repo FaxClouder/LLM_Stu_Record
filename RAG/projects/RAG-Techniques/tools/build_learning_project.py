@@ -152,6 +152,14 @@ def replace_runtime_config(source: str, *, evaluation: bool = False) -> str:
         'settings.require("HF_TOKEN")',
     )
     source = source.replace("OpenAIEmbeddings()", "OpenAIEmbeddings(model=EMBEDDING_MODEL)")
+    # 清理上游残留的 dotenv 与 Colab 配置代码：配置已由统一配置单元加载。
+    source = source.replace("from dotenv import load_dotenv\n", "")
+    source = source.replace("import dotenv\n", "")
+    source = re.sub(r'^[ \t]*load_dotenv\(\)\s*(?:\n|$)', '', source, flags=re.MULTILINE)
+    source = re.sub(r'^[ \t]*dotenv\.load_dotenv\(\)\s*(?:\n|$)', '', source, flags=re.MULTILINE)
+    source = re.sub(r'^[ \t]*from google\.colab import[^\n]*\n', '', source, flags=re.MULTILINE)
+    source = source.replace("# Load environment variables from a .env file\n", "")
+    source = source.replace("# Load environment variables from '.env' file\n", "")
     return source
 
 
@@ -265,13 +273,22 @@ def chinese_intro(name: str, lesson: Lesson, original: str) -> str:
 
 def transform_notebook(source: Path, destination: Path, lesson: Lesson) -> None:
     notebook = json.loads(source.read_text(encoding="utf-8"))
+    cleaned: list[dict] = []
     for cell in notebook.get("cells", []):
+        text = "".join(cell.get("source", []))
+        # 跳过上游遥测追踪图片与营销推广单元格。
+        if "rag-techniques-views-tracker" in text or "diamant-ai.com" in text or "rag-made-simple" in text:
+            continue
         if cell.get("cell_type") == "code":
-            text = "".join(cell.get("source", []))
             text = replace_runtime_config(text, evaluation=lesson.stage == "08-evaluation")
             cell["source"] = text.splitlines(keepends=True)
             cell["outputs"] = []
             cell["execution_count"] = None
+        # 清理后若单元格为空（代码或 markdown）则跳过。
+        if not "".join(cell.get("source", [])).strip():
+            continue
+        cleaned.append(cell)
+    notebook["cells"] = cleaned
 
     name = source.stem
     intro = {

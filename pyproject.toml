@@ -1,9 +1,9 @@
-[project]
+﻿[project]
 name = "llm-stu-record"
 version = "0.1.0"
 description = "LLM learning workspace with a uv-managed LangChain and LangGraph development environment."
 readme = "README.md"
-requires-python = ">=3.12,<3.14"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "langchain>=1.3.11",
     "langchain-azure-ai>=1.0.4",
@@ -31,6 +31,9 @@ dev = [
     "ruff>=0.15.20",
 ]
 
+[tool.uv.workspace]
+members = ["Agent/projects/memU"]
+
 [tool.uv]
 package = false
 
@@ -39,4 +42,4 @@ addopts = "-q"
 
 [tool.ruff]
 line-length = 100
-target-version = "py312"
+target-version = "py313"

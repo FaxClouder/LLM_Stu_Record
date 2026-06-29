@@ -15,6 +15,7 @@ Agent/
 ## 当前项目
 
 - [hello-agents](./projects/hello-agents/README.md)：Datawhale 的系统性智能体学习教程，覆盖 Agent 基础、经典范式、低代码平台、框架实践、记忆与检索、上下文工程、协议、评估、Agentic RL 和综合案例。
+- [memU](./projects/memU/README.md)：面向 AI 智能体的个人文件记忆系统（NevaMind-AI），将对话、文档、图像等多模态数据编译为可浏览的 Markdown 文件树（INDEX.md / MEMORY.md / SKILL.md），支持 memorize 写入和 retrieve 检索，具备自演化技能和可插拔存储后端。
 
 ## 内容规范
 
@@ -46,4 +47,3 @@ Agent/
 - 区分原文观点、个人理解和实践结论
 - 避免直接复制受版权保护的大段内容
 - 记录整理或更新日期
-
