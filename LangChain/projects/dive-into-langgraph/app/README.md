@@ -33,7 +33,7 @@
 
 > \[!NOTE\]
 > 
-> 图表可视化、高德地图、文件系统 三个 MCP 默认关闭。如需开启，请在 [app.py](./app.py) 中解开注释。此外，高德地图开启前需要在 [高德开放平台](https://lbs.amap.com/api/mcp-server/create-project-and-key) 申请 `API_KEY` 并配置到 `.env` 文件。
+> 图表可视化、高德地图、文件系统 三个 MCP 默认关闭。如需开启，请在 [app.py](./app.py) 中解开注释。此外，高德地图开启前需要在 [高德开放平台](https://lbs.amap.com/api/mcp-server/create-project-and-key) 申请 `API_KEY` 并配置到仓库根目录 `.env` 文件。
 
 <!-- ## 👷 技能 (Skills) -->
 
@@ -43,13 +43,13 @@
 
 ### 1）配置环境变量
 
-创建 `.env` 文件：
+在仓库根目录创建 `.env` 文件：
 
 ```bash
-cp .env.example .env
+cp ../../../../.env.example ../../../../.env
 ```
 
-然后注册 [阿里云百炼](https://bailian.console.aliyun.com/?tab=model#/model-market) 账号，获取 `API_KEY` 并配置到 `.env` 文件。
+然后按你选择的 provider 填写 `DASHSCOPE_*`、`DEEPSEEK_*`、`OPENAI_*`、`ARK_*` 或 `OLLAMA_*`。应用本地运行时会自动向上查找仓库根目录 `.env`。
 
 ### 2）启动 Agent 和 MCP Server
 
@@ -64,6 +64,9 @@ uv sync
 
 # 3. 使用 uv 运行应用
 uv run app.py
+
+# 可选：指定模型提供商
+uv run app.py --provider deepseek
 ```
 
 <details>
@@ -101,9 +104,10 @@ uv run app.py
 ├── Dockerfile
 ├── README.md               # 项目说明
 ├── app.py                  # 主应用入口
-├── .env.example            # 环境变量示例
+├── .env.example            # 指向仓库根目录环境变量模板
 ├── config                  # 配置模块
 │   ├── __init__.py
+│   ├── env.py              # 仓库根目录 .env 加载
 │   └── mcp_config.py       # MCP 配置
 ├── docker-compose.yml
 ├── docker.conf
@@ -145,7 +149,7 @@ uv run app.py
 
 ## 📦 容器部署
 
-启动容器前，请确保已经配置好 `.env` 文件。
+启动容器前，请确保已经配置好仓库根目录 `.env` 文件。
 
 ### 1）启动应用
 
@@ -216,3 +220,4 @@ uv add -r requirements.txt
 - [x] **支持容器部署**：支持使用 docker compose 一键部署智能体应用
 - [x] **增强错误处理**：使用 traceback 获取详细的错误信息，提升 LLM 摘要的准确度
 - [x] **新增配置模块**：新增 [config](./config) 模块，用于存储 MCP 配置
+- [x] **统一环境配置**：本地运行统一读取仓库根目录 `.env`，支持 DashScope、DeepSeek、OpenAI、ARK 和 Ollama

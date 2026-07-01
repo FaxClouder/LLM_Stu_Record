@@ -1,19 +1,12 @@
-import os
 import re
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langchain.messages import HumanMessage
 from langgraph.graph import MessagesState
 from langgraph.graph import StateGraph, START, END
 
-load_dotenv()
+from bootstrap import create_chat_model
 
-llm = ChatOpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-    model="qwen3-coder-plus",
-)
+llm = create_chat_model()
 
 # 1) 定义一个简单工具
 def get_weather(city: str) -> str:

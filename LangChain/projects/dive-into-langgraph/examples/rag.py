@@ -1,69 +1,24 @@
 """
-基于阿里百炼平台 API 的 RAG 示例
+基于 OpenAI-compatible API 的 RAG 示例
 
 参考: https://docs.langchain.com/oss/python/langchain/rag#build-a-rag-agent-with-langchain
 """
 
-import os
 import bs4
 
-from dotenv import load_dotenv
-from openai import OpenAI
-from langchain_openai import ChatOpenAI
 from langchain_community.document_loaders import WebBaseLoader
-from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-
-# 加载模型配置
-load_dotenv()
-
+from bootstrap import create_chat_model, create_embeddings
 
 # 加载模型
-llm = ChatOpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-    model="qwen3-coder-plus",
-    temperature=0.7,
-)
-
-# 创建 OpenAI 客户端
-client = OpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-)
-
-# DashScope 兼容的 OpenAIEmbeddings 实现
-class DashScopeEmbeddings(Embeddings):
-    def __init__(self, model: str = "text-embedding-v4", dimensions: int = 1024):
-        self.model = model
-        self.dimensions = dimensions
-
-    def embed_documents(self, texts: list[str]) -> list[list[float]]:
-        out: list[list[float]] = []
-        for i in range(0, len(texts), 10):
-            chunk = texts[i : i + 10]
-            r = client.embeddings.create(
-                model=self.model,
-                input=chunk,
-                dimensions=self.dimensions,
-            )
-            out.extend([d.embedding for d in r.data])
-        return out
-
-    def embed_query(self, text: str) -> list[float]:
-        r = client.embeddings.create(
-            model=self.model,
-            input=[text],
-            dimensions=self.dimensions,
-        )
-        return r.data[0].embedding
+llm = create_chat_model(temperature=0.7)
 
 # 初始化内存向量存储
-embeddings = DashScopeEmbeddings()
+embeddings = create_embeddings()
 vector_store = InMemoryVectorStore(embedding=embeddings)
 
 bs4_strainer = bs4.SoupStrainer(class_=("post"))

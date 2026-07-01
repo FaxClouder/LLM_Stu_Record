@@ -180,45 +180,8 @@ def sync_langchain_academy(root: Path, provider: ProviderConfig, values: dict[st
 
 
 def sync_dive_into_langgraph(root: Path, values: dict[str, str]) -> list[Path]:
-    project_root = root / "LangChain" / "projects" / "dive-into-langgraph"
-    project_env_path = project_root / ".env"
-    project_items = [
-        (
-            "DASHSCOPE_BASE_URL",
-            values.get("DASHSCOPE_BASE_URL") or "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        ),
-        ("DASHSCOPE_API_KEY", values.get("DASHSCOPE_API_KEY", "")),
-        ("TAVILY_API_KEY", values.get("TAVILY_API_KEY", "")),
-    ]
-    write_env(
-        project_env_path,
-        project_items,
-        header="# Generated from ../../.env by LangChain/tools/sync_langchain_env.py",
-    )
-
-    app_env_path = project_root / "app" / ".env"
-    app_items = [
-        (
-            "DASHSCOPE_BASE_URL",
-            values.get("DASHSCOPE_BASE_URL") or "https://dashscope.aliyuncs.com/compatible-mode/v1",
-        ),
-        ("DASHSCOPE_API_KEY", values.get("DASHSCOPE_API_KEY", "")),
-        ("ARK_BASE_URL", values.get("ARK_BASE_URL") or "https://ark.cn-beijing.volces.com/api/v3"),
-        ("ARK_API_KEY", values.get("ARK_API_KEY", "")),
-        ("DEEPSEEK_BASE_URL", values.get("DEEPSEEK_BASE_URL") or "https://api.deepseek.com"),
-        ("DEEPSEEK_API_KEY", values.get("DEEPSEEK_API_KEY", "")),
-        ("AMAP_API_KEY", values.get("AMAP_API_KEY", "")),
-        ("OPENSEARCH_SERVICE_ID", values.get("OPENSEARCH_SERVICE_ID") or "ops-web-search-001"),
-        ("OPENSEARCH_WORKSPACE_NAME", values.get("OPENSEARCH_WORKSPACE_NAME") or "default"),
-        ("OPENSEARCH_HOST", values.get("OPENSEARCH_HOST", "")),
-        ("OPENSEARCH_API_KEY", values.get("OPENSEARCH_API_KEY", "")),
-    ]
-    write_env(
-        app_env_path,
-        app_items,
-        header="# Generated from ../../../.env by LangChain/tools/sync_langchain_env.py",
-    )
-    return [project_env_path, app_env_path]
+    _ = (root, values)
+    return []
 
 
 def main() -> int:
@@ -247,6 +210,10 @@ def main() -> int:
     print("Generated files:")
     for path in generated_paths:
         print(f"  - {path.relative_to(root)}")
+    print(
+        "dive-into-langgraph: uses the repository-root .env directly; "
+        "no project-local .env files are generated."
+    )
 
     if provider.provider != "openai":
         print(
@@ -256,13 +223,13 @@ def main() -> int:
 
     if not values.get("DASHSCOPE_API_KEY"):
         print(
-            "Note: dive-into-langgraph 的主要 Notebook 和示例依赖 DASHSCOPE_API_KEY；"
-            "当前未检测到该配置，生成的 .env 将保留为空。"
+            "Note: dive-into-langgraph 的 LLM 初始化已统一读取仓库根目录 .env；"
+            "第 11、12 章的 DashScope 搜索工具仍需要 DASHSCOPE_API_KEY。"
         )
     elif provider.provider != "dashscope":
         print(
-            "Note: dive-into-langgraph 大量示例直接使用 Qwen 模型名。"
-            "即使当前共享 provider 不是 dashscope，运行该项目仍建议优先配置 DASHSCOPE_*。"
+            "Note: dive-into-langgraph 可通过 DIVE_PROVIDER / DIVE_CHAT_MODEL 覆盖 provider 和模型；"
+            "第 11、12 章的 DashScope 搜索工具会继续使用 DASHSCOPE_API_KEY。"
         )
 
     return 0

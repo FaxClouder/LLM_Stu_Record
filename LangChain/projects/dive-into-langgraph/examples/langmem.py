@@ -2,21 +2,14 @@
 langmem 记忆示例
 """
 
-import os
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from langchain.agents import create_agent
 from langgraph.store.memory import InMemoryStore
 from langmem import create_manage_memory_tool, create_search_memory_tool
 from langchain.messages import HumanMessage
 
-load_dotenv()
+from bootstrap import create_chat_model
 
-llm = ChatOpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-    model="qwen3-coder-plus",
-)
+llm = create_chat_model()
 
 # 创建具有记忆功能的智能体
 memory_store = InMemoryStore()

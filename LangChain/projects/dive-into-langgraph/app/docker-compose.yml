@@ -7,6 +7,6 @@ services:
       - "7860:7860"
     working_dir: /app
     env_file:
-      - .env
+      - ../../../../.env
     environment:
       - TZ=Asia/Shanghai
