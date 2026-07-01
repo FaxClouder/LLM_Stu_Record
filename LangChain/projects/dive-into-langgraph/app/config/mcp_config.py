@@ -28,7 +28,7 @@ def get_mcp_dict(base_path: str = "./") -> dict:
         },
         # =============== 高德地图 MCP ===============
         # 🌟 streamable http
-        # 必须先申请高德地图 API_KEY，详见 .env.example
+        # 必须先申请高德地图 API_KEY，并配置到仓库根目录 .env
         "amap-maps:http": {
             "url": f"https://mcp.amap.com/mcp?key={os.getenv('AMAP_API_KEY')}",
             "transport": "streamable_http",

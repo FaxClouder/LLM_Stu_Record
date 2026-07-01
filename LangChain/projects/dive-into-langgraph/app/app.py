@@ -13,7 +13,6 @@ import argparse
 from dataclasses import dataclass, field
 from typing import Any, AsyncIterator, Dict, List, Optional, Tuple
 
-from dotenv import load_dotenv
 from langchain.agents import create_agent
 from langchain.agents.middleware import (
     ModelRequest,
@@ -25,6 +24,7 @@ from langchain.tools import ToolRuntime, tool
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_openai import ChatOpenAI
 
+from config.env import load_workspace_env
 from config.mcp_config import get_mcp_dict
 from prompts import middleware_todolist, prompt_enhance, subagent_search
 from tools.tool_role import role_play
@@ -35,7 +35,7 @@ from utils.remove_html import get_cleaned_text
 from utils.tool_view import format_tool_call, format_tool_result
 from utils.web_ui import create_ui, custom_css, theme
 
-load_dotenv()
+load_workspace_env()
 
 TYPING_INDICATOR_HTML = (
     '<span class="typing-indicator" aria-label="AI 正在回复">'
@@ -70,20 +70,40 @@ class LLMConfig:
     @classmethod
     def from_env(cls, provider: str = "dashscope") -> LLMConfig:
         """从环境变量创建 LLM 配置"""
+        shared_model = os.getenv("DIVE_CHAT_MODEL") or os.getenv("LANGCHAIN_CHAT_MODEL")
         if provider == "dashscope":
             return cls(
                 provider=provider,
-                model="qwen3.7-plus",
-                base_url=os.getenv("DASHSCOPE_BASE_URL"),
+                model=shared_model or os.getenv("DASHSCOPE_MODEL") or "qwen3.7-plus",
+                base_url=(
+                    os.getenv("DASHSCOPE_BASE_URL")
+                    or "https://dashscope.aliyuncs.com/compatible-mode/v1"
+                ),
                 api_key=os.getenv("DASHSCOPE_API_KEY"),
                 enable_thinking=True,
+            )
+        if provider == "deepseek":
+            return cls(
+                provider=provider,
+                model=shared_model or os.getenv("DEEPSEEK_MODEL") or "deepseek-chat",
+                base_url=os.getenv("DEEPSEEK_BASE_URL") or "https://api.deepseek.com",
+                api_key=os.getenv("DEEPSEEK_API_KEY"),
+                enable_thinking=False,
+            )
+        if provider == "openai":
+            return cls(
+                provider=provider,
+                model=shared_model or os.getenv("OPENAI_CHAT_MODEL") or "gpt-4o-mini",
+                base_url=os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1",
+                api_key=os.getenv("OPENAI_API_KEY"),
+                enable_thinking=False,
             )
         if provider == "ark":
             # 字节火山方舟，支持：deepseek-v3-2-251201 / kimi-k2-thinking-251104
             return cls(
                 provider=provider,
-                model="deepseek-v3-2-251201",
-                base_url=os.getenv("ARK_BASE_URL"),
+                model=shared_model or os.getenv("ARK_MODEL") or "deepseek-v3-2-251201",
+                base_url=os.getenv("ARK_BASE_URL") or "https://ark.cn-beijing.volces.com/api/v3",
                 api_key=os.getenv("ARK_API_KEY"),
                 enable_thinking=False,
             )
@@ -93,9 +113,9 @@ class LLMConfig:
             #   OLLAMA_HOST=0.0.0.0:11435 ollama serve
             return cls(
                 provider=provider,
-                model="qwen3:4b",
-                base_url="http://127.0.0.1:11435/v1",
-                api_key="-",
+                model=shared_model or os.getenv("OLLAMA_MODEL") or "qwen3:4b",
+                base_url=os.getenv("OLLAMA_BASE_URL") or "http://127.0.0.1:11435/v1",
+                api_key=os.getenv("OLLAMA_API_KEY") or "-",
                 enable_thinking=True,
                 temperature=0.7,
                 top_p=0.9,
@@ -106,10 +126,12 @@ class LLMConfig:
         """转换为 ChatOpenAI 的构造参数"""
         kwargs: dict = {
             "model": self.model,
-            "base_url": self.base_url,
-            "api_key": self.api_key,
             "timeout": self.timeout,
         }
+        if self.base_url:
+            kwargs["base_url"] = self.base_url
+        if self.api_key:
+            kwargs["api_key"] = self.api_key
         if self.enable_thinking:
             kwargs["extra_body"] = {
                 "chat_template_kwargs": {"enable_thinking": True}
@@ -487,8 +509,11 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=7860, help="端口号")
     parser.add_argument(
         "--provider",
-        default="dashscope",
-        choices=["dashscope", "ark", "ollama"],
+        default=os.getenv("DIVE_APP_PROVIDER")
+        or os.getenv("DIVE_PROVIDER")
+        or os.getenv("LANGCHAIN_PROVIDER")
+        or "dashscope",
+        choices=["dashscope", "deepseek", "openai", "ark", "ollama"],
         help="LLM 提供商",
     )
     args = parser.parse_args()

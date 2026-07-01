@@ -1,24 +1,13 @@
-import os
 import uuid
 
-from dotenv import load_dotenv
 from typing_extensions import TypedDict, NotRequired
 from langgraph.graph import StateGraph, START, END
-from langchain_openai import ChatOpenAI
 from langgraph.checkpoint.memory import InMemorySaver
 
-
-# 加载模型配置
-load_dotenv()
-
+from bootstrap import create_chat_model
 
 # 加载模型
-llm = ChatOpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-    model="qwen3-coder-plus",
-    temperature=0.7,
-)
+llm = create_chat_model(temperature=0.7)
 
 
 class State(TypedDict):

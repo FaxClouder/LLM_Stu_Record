@@ -11,26 +11,17 @@
     $ docker exec myredis redis-cli JSON.GET store:01
 """
 
-import os
 import uuid
 
-from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph import StateGraph, MessagesState, START
 from langgraph.store.redis import RedisStore  
 from langgraph.store.base import BaseStore
 
-# 加载模型配置
-load_dotenv()
+from bootstrap import create_chat_model
 
 # 加载模型
-llm = ChatOpenAI(
-    api_key=os.getenv("DASHSCOPE_API_KEY"),
-    base_url=os.getenv("DASHSCOPE_BASE_URL"),
-    model="qwen3-coder-plus",
-    temperature=0.7,
-)
+llm = create_chat_model(temperature=0.7)
 
 DB_URI = "redis://localhost:6379"
 

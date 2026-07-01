@@ -33,7 +33,7 @@
 > \[!NOTE\]
 >
 > - The **Chart visualization** and **Filesystem** MCPs are disabled by default. Before starting them, you need to install packages via `npx`. I’m not confident about typical network speeds in China and worry the startup time could be too long, so they’re kept off. If you want to use them, uncomment the `stdio` sections for both in [app.py](../app.py). After uncommenting, a long first startup is normal—please be patient.
-> - The **AMap** MCP is also disabled by default because it requires an `API_KEY` from the [AMap Open Platform](https://lbs.amap.com/api/mcp-server/create-project-and-key). Put the `API_KEY` in the `.env` file, then uncomment the corresponding part in `app.py` to run it.
+> - The **AMap** MCP is also disabled by default because it requires an `API_KEY` from the [AMap Open Platform](https://lbs.amap.com/api/mcp-server/create-project-and-key). Put the `API_KEY` in the repository-root `.env` file, then uncomment the corresponding part in `app.py` to run it.
 > - `stdio` is ultimately a stopgap. For a long-running background service, `http` (Streamable HTTP) is recommended. Although `http` requires an extra port for `app.py`, it has lower latency and higher efficiency.
 
 <!-- ## 👷 Skills -->
@@ -44,13 +44,13 @@
 
 ### 1) Configure environment variables
 
-Create a `.env` file:
+Create a `.env` file in the repository root:
 
 ```bash
-cp .env.example .env
+cp ../../../../.env.example ../../../../.env
 ```
 
-Then register for [Alibaba Cloud Bailian](https://bailian.console.aliyun.com/?tab=model#/model-market), get an `API_KEY`, and set it in the `.env` file.
+Then fill in `DASHSCOPE_*`, `DEEPSEEK_*`, `OPENAI_*`, `ARK_*`, or `OLLAMA_*` for the provider you want to use. The app automatically searches upward for the repository-root `.env` file when running locally.
 
 ### 2) Start the Agent and MCP Server
 
@@ -65,6 +65,9 @@ uv sync
 
 # 3. Run the app with uv
 uv run app.py
+
+# Optional: choose a provider
+uv run app.py --provider deepseek
 ```
 
 <details>
@@ -94,9 +97,10 @@ See: [query.md](./query.md)
 ├── Dockerfile
 ├── README.md               # Project overview
 ├── app.py                  # Main app entry
-├── .env.example            # Example environment variables
+├── .env.example            # Pointer to the repository-root env template
 ├── config                  # Config module
 │   ├── __init__.py
+│   ├── env.py              # Repository-root .env loading
 │   └── mcp_config.py       # MCP configuration
 ├── docker-compose.yml
 ├── docker.conf
@@ -138,7 +142,7 @@ See: [query.md](./query.md)
 
 ## 📦 Container Deployment
 
-Before starting containers, make sure you’ve configured the `.env` file.
+Before starting containers, make sure you’ve configured the repository-root `.env` file.
 
 ### 1) Start the app
 
@@ -202,3 +206,4 @@ uv add -r requirements.txt
 - [x] **Container deployment support**: one-click deployment via docker compose
 - [x] **Enhanced error handling**: use traceback for detailed error info to improve LLM summary accuracy
 - [x] **New config module**: added [config](../config) module for storing MCP configuration
+- [x] **Unified environment config**: local runs read the repository-root `.env`, with DashScope, DeepSeek, OpenAI, ARK, and Ollama support
