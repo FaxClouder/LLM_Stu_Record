@@ -20,6 +20,8 @@
 
 ---
 
+> Workspace note: environment variables are centralized in the repository-root `.env`. Per-project `.env.example`, `env.example`, and `.env.local` files are not maintained in this workspace.
+
 **Personal memory, stored as files.** memU turns the data around a user — conversations, documents, code, images, audio, video, URLs, and tool traces — into a tree of human-readable Markdown files your agent can open and traverse. No opaque vector blob, no giant prompt: just `INDEX.md`, `MEMORY.md`, and `SKILL.md` the agent navigates before it acts.
 
 

@@ -60,28 +60,24 @@ Install dependencies with uv and start the app:
 # 1. Install uv
 pip install uv -U
 
-# 2. Sync the virtual environment with uv
-uv sync
+# 2. Return to the repository root and sync the shared uv environment
+cd ../../../..
+uv sync --group langgraph-app
 
-# 3. Run the app with uv
-uv run app.py
+# 3. Run the app with the root uv environment
+uv run --env-file ./.env python ./LangChain/projects/dive-into-langgraph/app/app.py
 
 # Optional: choose a provider
-uv run app.py --provider deepseek
+uv run --env-file ./.env python ./LangChain/projects/dive-into-langgraph/app/app.py --provider deepseek
 ```
 
 <details>
   <summary>If uv installation fails, you can use pip</summary>
   
   ```bash
-  # 1. Install dependencies
-  pip install -r requirements.txt -U -i https://mirrors.cloud.tencent.com/pypi/simple/
-  # Notes:
-  #   -i uses a mirror (full name: --index-url)
-  #   -U upgrades to the latest versions (full name: --upgrade)
-
-  # 2. Run the app
-  python app.py
+  # Use the shared uv environment from the repository root
+  uv sync --group langgraph-app -i https://mirrors.cloud.tencent.com/pypi/simple/
+  uv run --env-file ./.env python ./LangChain/projects/dive-into-langgraph/app/app.py
   ```
   
 </details>
@@ -97,7 +93,6 @@ See: [query.md](./query.md)
 ├── Dockerfile
 ├── README.md               # Project overview
 ├── app.py                  # Main app entry
-├── .env.example            # Pointer to the repository-root env template
 ├── config                  # Config module
 │   ├── __init__.py
 │   ├── env.py              # Repository-root .env loading
@@ -137,7 +132,6 @@ See: [query.md](./query.md)
 │   ├── think_view.py
 │   ├── tool_view.py
 │   └── web_ui.py
-└── uv.lock
 ```
 
 ## 📦 Container Deployment
@@ -180,12 +174,9 @@ docker compose exec -it gradio-agent bash
 # 1. Make sure uv is installed
 pip install uv -U
 
-# 2. Initialize the project (creates a pyproject.toml with basic info)
-uv init --name gradio-agent-app --description "Streaming conversational agent built with LangChain" --python 3.13
-
-# 3. Update the dependencies section in pyproject.toml
-# This creates a .venv virtual environment and an uv.lock file
-uv add -r requirements.txt
+# 2. Sync the app dependency group from the repository root
+cd ../../../..
+uv sync --group langgraph-app
 ```
 
 ## 📝 Changelog

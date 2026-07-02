@@ -38,10 +38,10 @@ uv run python .\LangChain\tools\sync_langchain_env.py
 
 ## 运行建议
 
-主教程的依赖没有完全包含在仓库根 `pyproject.toml` 中，第一次运行前建议额外安装当前项目的依赖：
+主教程和 `app/` 示例的常用依赖已经收进仓库根 `pyproject.toml`，第一次运行前在仓库根目录同步依赖组：
 
 ```powershell
-uv pip install -r .\LangChain\projects\dive-into-langgraph\requirements.txt
+uv sync --group langgraph-app
 ```
 
 如果你想运行教程 Notebook，建议从仓库根目录启动：
@@ -56,7 +56,7 @@ uv run --env-file .\.env jupyter lab .\LangChain\projects\dive-into-langgraph
 uv run --project ..\..\.. --env-file ..\..\..\.env langgraph dev
 ```
 
-如果你想运行 `app/` 里的 Gradio 示例，建议单独进入 `app/` 目录并按它自己的 `pyproject.toml` 管理依赖。应用会自动向上读取仓库根目录 `.env`。注意该子项目要求 `Python >= 3.13`。
+如果你想运行 `app/` 里的 Gradio 示例，也从仓库根目录的 uv 环境启动；应用会自动向上读取仓库根目录 `.env`。注意该子项目要求 `Python >= 3.13`。
 
 ## 兼容性说明
 

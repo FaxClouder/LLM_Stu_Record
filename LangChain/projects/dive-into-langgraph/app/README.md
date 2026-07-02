@@ -59,28 +59,24 @@ cp ../../../../.env.example ../../../../.env
 # 1. 安装 uv
 pip install uv -U
 
-# 2. 使用 uv 同步虚拟环境
-uv sync
+# 2. 回到仓库根目录，同步统一 uv 环境
+cd ..\..\..\..
+uv sync --group langgraph-app
 
-# 3. 使用 uv 运行应用
-uv run app.py
+# 3. 使用根目录 uv 环境运行应用
+uv run --env-file .\.env python .\LangChain\projects\dive-into-langgraph\app\app.py
 
 # 可选：指定模型提供商
-uv run app.py --provider deepseek
+uv run --env-file .\.env python .\LangChain\projects\dive-into-langgraph\app\app.py --provider deepseek
 ```
 
 <details>
   <summary>如果使用 uv 安装失败，可以使用 pip 安装</summary>
   
   ```bash
-  # 1. 安装依赖包
-  pip install -r requirements.txt -U -i https://mirrors.cloud.tencent.com/pypi/simple/
-  # 注释：
-  #   -i 为使用镜像源，全称 --index-url
-  #   -U 为升级到最新包版本，全称 --upgrade
-
-  # 2. 运行应用
-  python app.py
+  # 从仓库根目录使用统一 uv 环境
+  uv sync --group langgraph-app -i https://mirrors.cloud.tencent.com/pypi/simple/
+  uv run --env-file .\.env python .\LangChain\projects\dive-into-langgraph\app\app.py
   ```
   
 </details>
@@ -104,7 +100,6 @@ uv run app.py --provider deepseek
 ├── Dockerfile
 ├── README.md               # 项目说明
 ├── app.py                  # 主应用入口
-├── .env.example            # 指向仓库根目录环境变量模板
 ├── config                  # 配置模块
 │   ├── __init__.py
 │   ├── env.py              # 仓库根目录 .env 加载
@@ -144,7 +139,6 @@ uv run app.py --provider deepseek
 │   ├── think_view.py
 │   ├── tool_view.py
 │   └── web_ui.py
-└── uv.lock
 ```
 
 ## 📦 容器部署
@@ -187,12 +181,9 @@ docker compose exec -it gradio-agent bash
 # 1. 确保已经安装 uv
 pip install uv -U
 
-# 2. 初始化项目，这会创建一个包含基础信息的 pyproject.toml 文件
-uv init --name gradio-agent-app --description "基于 LangChain 构建流式对话智能体" --python 3.13
-
-# 3. 更新 pyproject.toml 中的 dependencies 部分
-# 这会自动创建 .venv 虚拟环境，并创建 uv.lock 文件
-uv add -r requirements.txt
+# 2. 在仓库根目录同步 app 依赖组
+cd ..\..\..\..
+uv sync --group langgraph-app
 ```
 
 ## 📢 更多介绍

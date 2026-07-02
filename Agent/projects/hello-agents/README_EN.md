@@ -21,6 +21,8 @@
 
 ---
 
+> Workspace note: environment variables are centralized in the repository-root `.env`. Per-project `.env.example`, `env.example`, and `.env.local` files are not maintained in this workspace.
+
 ## 🎯 Project Introduction
 
 &emsp;&emsp;If 2024 was the year of the "Battle of a Hundred Models," then 2025 has undoubtedly ushered in the "Year of Agents." The focus of technology is shifting from training larger foundation models to building smarter agent applications. However, systematic, practice-oriented tutorials are extremely scarce. For this reason, we launched the Hello-Agents project, hoping to provide the community with a comprehensive guide to building agent systems from scratch, balancing theory and practice.

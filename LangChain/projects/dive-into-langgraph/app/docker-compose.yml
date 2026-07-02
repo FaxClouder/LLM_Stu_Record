@@ -1,11 +1,12 @@
 services:
   gradio-agent:
     build:
-      dockerfile: Dockerfile
+      context: ../../../..
+      dockerfile: LangChain/projects/dive-into-langgraph/app/Dockerfile
     container_name: gradio-agent-container
     ports:
       - "7860:7860"
-    working_dir: /app
+    working_dir: /workspace/LangChain/projects/dive-into-langgraph/app
     env_file:
       - ../../../../.env
     environment:

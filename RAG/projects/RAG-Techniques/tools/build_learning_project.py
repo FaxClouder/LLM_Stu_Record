@@ -164,7 +164,7 @@ def replace_runtime_config(source: str, *, evaluation: bool = False) -> str:
 
 
 def bootstrap_source(evaluation: bool) -> str:
-    return f"""# 统一配置入口：模型名和服务地址来自 config/models.toml，密钥来自 .env
+    return f"""# 统一配置入口：模型名和服务地址来自 config/models.toml，密钥来自仓库根目录 .env
 from pathlib import Path
 import os
 import sys
@@ -214,7 +214,7 @@ def guide_text(name: str, lesson: Lesson, notebook_path: Path) -> str:
 
 > 学习阶段：{stage_title}  
 > 上游文件：`{notebook_path.name}`  
-> 配置入口：`config/models.toml` + `.env`
+> 配置入口：`config/models.toml` + 仓库根目录 `.env`
 
 ## 目标
 
@@ -227,7 +227,7 @@ def guide_text(name: str, lesson: Lesson, notebook_path: Path) -> str:
 ## 建议步骤
 
 1. 先阅读本导读，明确该技术试图解决的基础 RAG 问题。
-2. 复制 `.env.example` 为 `.env`，只填写当前案例实际需要的密钥。
+2. 在仓库根目录 `.env` 中填写当前案例实际需要的密钥。
 3. 从项目根目录启动 JupyterLab，再打开同目录 Notebook。
 4. 先使用默认小型数据和少量样本运行，确认流水线正确。
 5. 与第一阶段的基础 RAG 使用同一测试问题进行对照。
@@ -265,7 +265,7 @@ def chinese_intro(name: str, lesson: Lesson, original: str) -> str:
 
 - 从项目根目录启动 JupyterLab。
 - 模型和服务地址统一读取 `config/models.toml`。
-- API Key 等敏感信息只写入本地 `.env`。
+- API Key 等敏感信息只写入仓库根目录 `.env`。
 - 本 Notebook 保留上游实现用于技术核对；新增中文导读负责说明学习顺序、配置方式和实验重点。
 - 运行前阅读同目录的 `{name}.zh-CN.md`。
 """
@@ -399,23 +399,22 @@ def write_root_readme(target: Path, grouped: dict[str, list[tuple[str, Lesson]]]
 ## 快速开始
 
 ```powershell
-python -m venv .venv
-.\\.venv\\Scripts\\Activate.ps1
-python -m pip install -e ".[notebook,nlp,llamaindex,providers]"
-Copy-Item .env.example .env
-jupyter lab
+cd ..\\..\\..
+uv sync --group rag
+Copy-Item .\\.env.example .\\.env
+uv run --env-file .\\.env jupyter lab .\\RAG\\projects\\RAG-Techniques
 ```
 
 然后：
 
-1. 在 `.env` 中填写实际使用的 API Key。
+1. 在仓库根目录 `.env` 中填写实际使用的 API Key。
 2. 在 `config/models.toml` 中选择模型和服务地址。
 3. 从 `learning-path/01-foundations/simple_rag.ipynb` 开始。
 
 ## 配置边界
 
 - `config/models.toml`：模型名称、Base URL、温度、Token 上限等非敏感参数。
-- `.env`：API Key、Token、私有 Endpoint 等敏感配置，不提交 Git。
+- 仓库根目录 `.env`：API Key、Token、私有 Endpoint 等敏感配置，不提交 Git。
 - `src/rag_techniques_zh/config.py`：配置读取、校验和环境变量覆盖。
 - `src/rag_techniques_zh/factories.py`：统一创建 Chat、Embedding 和 OpenAI 客户端。
 
@@ -429,7 +428,6 @@ RAG-Techniques/
 ├── src/                # 公共配置、模型工厂和兼容辅助代码
 ├── tests/              # 配置与结构测试
 ├── tools/              # 重建学习项目的工具
-├── .env.example        # 密钥模板
 └── pyproject.toml      # 基础与可选依赖
 ```
 

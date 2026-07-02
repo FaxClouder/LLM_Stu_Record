@@ -23,23 +23,22 @@
 ## 快速开始
 
 ```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[notebook,nlp,llamaindex,providers]"
-Copy-Item .env.example .env
-jupyter lab
+cd ..\..\..
+uv sync --group rag
+Copy-Item .\.env.example .\.env
+uv run --env-file .\.env jupyter lab .\RAG\projects\RAG-Techniques
 ```
 
 然后：
 
-1. 在 `.env` 中填写实际使用的 API Key。
+1. 在仓库根目录 `.env` 中填写实际使用的 API Key。
 2. 在 `config/models.toml` 中选择模型和服务地址。
 3. 从 `learning-path/01-foundations/simple_rag.ipynb` 开始。
 
 ## 配置边界
 
 - `config/models.toml`：模型名称、Base URL、温度、Token 上限等非敏感参数。
-- `.env`：API Key、Token、私有 Endpoint 等敏感配置，不提交 Git。
+- 仓库根目录 `.env`：API Key、Token、私有 Endpoint 等敏感配置，不提交 Git。
 - `src/rag_techniques_zh/config.py`：配置读取、校验和环境变量覆盖。
 - `src/rag_techniques_zh/factories.py`：统一创建 Chat、Embedding 和 OpenAI 客户端。
 
@@ -53,7 +52,6 @@ RAG-Techniques/
 ├── src/                # 公共配置、模型工厂和兼容辅助代码
 ├── tests/              # 配置与结构测试
 ├── tools/              # 重建学习项目的工具
-├── .env.example        # 密钥模板
 └── pyproject.toml      # 基础与可选依赖
 ```
 

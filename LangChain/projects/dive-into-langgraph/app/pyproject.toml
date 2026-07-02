@@ -1,7 +1,7 @@
 [project]
 name = "gradio-agent-app"
 version = "0.1.0"
-description = "基于 LangChain 构建流式对话智能体"
+description = "Streaming chat agent built with LangChain and Gradio."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

@@ -6,7 +6,7 @@
       "chatbot_memory_collection": "./memoryschema_collection.py:graph",
       "memory_agent": "./memory_agent.py:graph"
     },
-    "env": "./.env",
+    "env": "../../../../../.env",
     "python_version": "3.11",
     "dependencies": [
       "."

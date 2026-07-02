@@ -17,6 +17,11 @@ Agent/
 - [hello-agents](./projects/hello-agents/README.md)：Datawhale 的系统性智能体学习教程，覆盖 Agent 基础、经典范式、低代码平台、框架实践、记忆与检索、上下文工程、协议、评估、Agentic RL 和综合案例。
 - [memU](./projects/memU/README.md)：面向 AI 智能体的个人文件记忆系统（NevaMind-AI），将对话、文档、图像等多模态数据编译为可浏览的 Markdown 文件树（INDEX.md / MEMORY.md / SKILL.md），支持 memorize 写入和 retrieve 检索，具备自演化技能和可插拔存储后端。
 
+## 统一环境配置
+
+本仓库只维护根目录 `.env.example` 和本地 `.env`。克隆项目及共创项目目录里的重复 `.env.example`、`env.example`、`.env.local` 已清理；运行示例时请把所需的 `OPENAI_*`、`DEEPSEEK_*`、`DASHSCOPE_*`、`LLM_*` 等变量统一写入仓库根目录 `.env`。
+Python 依赖统一由仓库根目录 `uv` 环境管理；子项目里的 `requirements.txt`、`pyproject.toml` 仅作为上游参考或包元数据保留。
+
 ## 内容规范
 
 ### `projects/`

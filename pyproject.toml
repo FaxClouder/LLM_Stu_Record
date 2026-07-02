@@ -1,7 +1,7 @@
 ﻿[project]
 name = "llm-stu-record"
 version = "0.1.0"
-description = "LLM learning workspace with a uv-managed LangChain and LangGraph development environment."
+description = "LLM learning workspace with one uv-managed Python environment at the repository root."
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
 dependencies = [
@@ -28,15 +28,51 @@ dependencies = [
 dev = [
     "ipykernel>=7.3.0",
     "jupyterlab>=4.6.0",
+    "nbformat>=5.10",
     "pytest>=9.1.1",
     "ruff>=0.15.20",
 ]
+langgraph-app = [
+    "dashscope>=1.25.24",
+    "fastmcp>=3.4.2",
+    "gradio>=6.19.0",
+    "typer>=0.24.1,<0.25",
+]
+rag = [
+    "rag-techniques-zh[llamaindex,nlp,notebook,providers]",
+]
+rag-evaluation = [
+    "rag-techniques-zh[evaluation]",
+]
+rag-advanced = [
+    "rag-techniques-zh[advanced,graph]",
+]
+rag-multimodal = [
+    "rag-techniques-zh[multimodal]",
+]
+agent = [
+    "memu-py[document,langgraph]",
+]
+all-learning = [
+    { include-group = "agent" },
+    { include-group = "langgraph-app" },
+    { include-group = "rag" },
+    { include-group = "rag-advanced" },
+    { include-group = "rag-evaluation" },
+]
 
 [tool.uv.workspace]
-members = ["Agent/projects/memU"]
+members = [
+    "Agent/projects/memU",
+    "RAG/projects/RAG-Techniques",
+]
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+memu-py = { workspace = true }
+rag-techniques-zh = { workspace = true }
 
 [tool.pytest.ini_options]
 addopts = "-q"

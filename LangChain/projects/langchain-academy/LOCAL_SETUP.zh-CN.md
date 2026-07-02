@@ -14,37 +14,38 @@
 ## 这里的改动边界
 
 - 保留 `module-0` 到 `module-6` 的上游结构。
-- 为项目根目录和 `module-1` 到 `module-5` 的 `studio/` 自动生成 `.env`。
+- `module-1` 到 `module-5` 的 `studio/langgraph.json` 直接指向仓库根目录 `.env`。
 - 不批量改写上游 Notebook 内容。
 
 ## 第一次使用
 
-在仓库根目录执行：
+在仓库根目录基于 `.env.example` 创建 `.env`，并补全课程需要的字段。常用字段包括：
+
+```dotenv
+OPENAI_API_KEY=
+OPENAI_BASE_URL=
+OPENAI_MODEL=
+OPENAI_EMBEDDING_MODEL=
+LANGSMITH_API_KEY=
+LANGSMITH_TRACING=true
+TAVILY_API_KEY=
+```
+
+可选执行检查命令：
 
 ```powershell
 uv run python .\LangChain\tools\sync_langchain_env.py
 ```
-
-这会生成：
-
-- 当前目录下的 `.env`
-- `module-1/studio/.env`
-- `module-2/studio/.env`
-- `module-3/studio/.env`
-- `module-4/studio/.env`
-- `module-5/studio/.env`
-
-生成的 `.env` 里除了 `OPENAI_API_KEY` / `OPENAI_BASE_URL` 外，还会补上 `OPENAI_MODEL`，供已改造的 Studio 脚本直接读取。
 
 ## Notebook 启动方式
 
 上游 Notebook 默认依赖“环境变量已经在当前进程里存在”。因此建议从当前目录启动：
 
 ```powershell
-uv run --env-file .\.env jupyter notebook
+uv run --env-file ..\..\..\.env jupyter notebook
 ```
 
-这样 `OPENAI_API_KEY`、`OPENAI_BASE_URL`、`LANGSMITH_*`、`TAVILY_API_KEY` 会自动注入当前会话。
+这样根目录 `.env` 中的 `OPENAI_API_KEY`、`OPENAI_BASE_URL`、`OPENAI_MODEL`、`LANGSMITH_*`、`TAVILY_API_KEY` 会自动注入当前会话。
 
 ## Studio 启动方式
 
@@ -54,7 +55,7 @@ uv run --env-file .\.env jupyter notebook
 uv run langgraph dev
 ```
 
-`langgraph.json` 已经指向本目录下的 `.env`，所以会直接读取同步后的配置。
+`langgraph.json` 已经指向仓库根目录 `.env`，所以不会再读取或生成当前目录下的 `.env`。
 
 ## 兼容性说明
 

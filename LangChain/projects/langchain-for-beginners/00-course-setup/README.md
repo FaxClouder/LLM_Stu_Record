@@ -154,27 +154,30 @@ GitHub Models provides free access to powerful AI models—you just need a Perso
 
 ### Step 4: Configure Environment Variables
 
-#### Create `.env` file
+#### Create the workspace `.env` file
+
+This workspace keeps one shared `.env` at the repository root. Do not create
+another `.env` inside `LangChain/projects/langchain-for-beginners`.
 
 **Mac, Linux, WSL on Windows:**
 
 ```bash
-cp .env.example .env
+cp ../../../.env.example ../../../.env
 ```
 
 **Windows Command Prompt:**
 
 ```bash
 # Windows Command Prompt
-copy .env.example .env
+copy ..\..\..\.env.example ..\..\..\.env
 
 # Windows PowerShell
-Copy-Item .env.example .env
+Copy-Item ..\..\..\.env.example ..\..\..\.env
 ```
 
 #### Edit `.env` file
 
-Open `.env` in your text editor and configure your AI provider.
+Open the repository-root `.env` in your text editor and configure your AI provider.
 
 **For GitHub Models (Free):**
 
@@ -227,7 +230,7 @@ Before starting the course, make sure you have:
 For Codespaces:
 
 - [ ] The Codepsace and terminal open
-- [ ] A `.env` with the expected variables
+- [ ] The repository-root `.env` has the expected variables
 - [ ] Test script runs successfully
 
 For Local development:
@@ -236,7 +239,7 @@ For Local development:
 - [ ] Project cloned and virtual environment created
 - [ ] Dependencies installed (`pip install -r requirements.txt`)
 - [ ] GitHub Personal Access Token created if you're using GitHub Models. If you're using Microsoft Foundry, ensure your models are deployed and you have your API key and endpoint.
-- [ ] `.env` file configured with your token (or key if using Microsoft Foundry) and endpoint
+- [ ] Repository-root `.env` configured with your token (or key if using Microsoft Foundry) and endpoint
 - [ ] Test script runs successfully
 - [ ] VS Code installed (optional but recommended)
 

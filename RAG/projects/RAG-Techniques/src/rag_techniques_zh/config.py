@@ -1,6 +1,6 @@
 """集中读取模型、API 地址和访问凭证。
 
-非敏感配置保存在 ``config/models.toml``，密钥保存在项目根目录的
+非敏感配置保存在 ``config/models.toml``，密钥保存在仓库根目录的
 ``.env``。环境变量具有最高优先级，便于 CI 和部署环境覆盖。
 """
 
@@ -26,6 +26,17 @@ def find_project_root(start: Path | None = None) -> Path:
             if (candidate / "pyproject.toml").exists():
                 return candidate
     raise FileNotFoundError("未找到项目根目录，请从 RAG-Techniques 目录或其子目录运行。")
+
+
+def find_workspace_root(start: Path | None = None) -> Path:
+    """从当前路径向上查找仓库根目录，用于读取统一的 ``.env``。"""
+    current = (start or Path(__file__)).resolve()
+    if current.is_file():
+        current = current.parent
+    for candidate in (current, *current.parents):
+        if (candidate / "pyproject.toml").exists() and (candidate / "RAG").is_dir():
+            return candidate
+    return find_project_root(start)
 
 
 def _env(name: str, default: str = "") -> str:
@@ -128,13 +139,14 @@ class Settings:
         missing = [name for name in names if not os.getenv(name)]
         if missing:
             joined = "、".join(missing)
-            raise RuntimeError(f"缺少配置：{joined}。请复制 .env.example 为 .env 后填写。")
+            raise RuntimeError(f"缺少配置：{joined}。请在仓库根目录 .env 中填写。")
 
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     root = find_project_root()
-    load_dotenv(root / ".env")
+    workspace_root = find_workspace_root(root)
+    load_dotenv(workspace_root / ".env")
     config_path = root / "config" / "models.toml"
     with config_path.open("rb") as file:
         raw = tomllib.load(file)
